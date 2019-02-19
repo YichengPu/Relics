@@ -7,7 +7,6 @@ def entropy(arr,split,ep=1e-7):
     p=sum(arr[arr>=split])/len(arr)
     return -(p*g_log(p+ep)+(1-p)*g_log(1-p+ep))
 
-
 def gini_index(arr,split):
     p=sum(arr[arr>=split])/len(arr)
     return (p*(1-p)+(1-p)*p)
@@ -22,13 +21,11 @@ def split(mat,col,v):
         else:
             right.append(i)
 
-
     return (left,right)
 
 def branch(mat,target):
 
     nrow,ncol=mat.shape
-
 
     best_split=(-1,-1)
     best_gain=0
@@ -41,7 +38,6 @@ def branch(mat,target):
             leng_right=len(right)
 #             print(i,j,left,right)
             if leng_left>0 and leng_right>0:
-
 
                 # info_gain=entropy(target,1)-len(left)/nrow*entropy(target[left],1)\
                 #     -len(right)/nrow*entropy(target[right],1)
@@ -60,8 +56,6 @@ def branch(mat,target):
             return best_split,[],[],[],[]
     left,right=split(mat,best_split[1],mat[best_split])
     return best_split,mat[left,:],mat[right,:],target[left],target[right]
-
-
 
 def grow(node,n):
 
@@ -97,8 +91,6 @@ def grow(node,n):
     grow(node.right,n)
     return
 
-
-
 def predict(x,root):
     node=root
     prev=node
@@ -112,7 +104,6 @@ def predict(x,root):
 
 #     print(node.value,node.col,node.left,node.right)
     return sum(node.target)/len(node.target)>0.5
-
 
 class dnode:
     def __init__(self,data,target):
@@ -134,7 +125,6 @@ class dnode:
 class decision_tree:
     def __init__(self):
         self.root=None
-
         return
 
     def fit(self,data,target):
@@ -142,7 +132,6 @@ class decision_tree:
         data: array of size(n,p)
         target: binary arrary of size(n)
         '''
-
         self.root=dnode(data,target)
         grow(self.root,0)
 

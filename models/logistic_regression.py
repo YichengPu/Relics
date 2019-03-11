@@ -54,6 +54,6 @@ class logistic_model:
         n=len(X)
         res=[]
         for i in range(n):
-            ind=int(logit(X[i],self.theta) > 0.5 )
+            ind=logit(X[i],self.theta)
             res.append(ind)
         return res

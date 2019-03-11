@@ -23,15 +23,19 @@ def split(mat,col,v):
 
     return (left,right)
 
-def branch(mat,target):
+def branch(mat,target,random_feature=False):
 
     nrow,ncol=mat.shape
 
     best_split=(-1,-1)
     best_gain=0
 
+    feature=np.arange(ncol)
+    if random_feature:
+        n_sample=int(np.sqrt(ncol))
+        feature=np.random.choice(feature,n_sample)
     for i in range(nrow):
-        for j in range(ncol):
+        for j in feature:
             left,right=split(mat,j,mat[i][j])
 
             leng_left=len(left)
@@ -57,17 +61,17 @@ def branch(mat,target):
     left,right=split(mat,best_split[1],mat[best_split])
     return best_split,mat[left,:],mat[right,:],target[left],target[right]
 
-def grow(node,n):
-
-    if n>=10:
+def grow(node,n,max_depth,min_sample,random_feature):
+    #n for depth
+    if n>=max_depth:
         return
-    if len(node.data)<5:
-        return
-
-    if sum(node.target) == len(node.target):
+    if len(node.data)<min_sample:
         return
 
-    best_split,mat_left,mat_right,target_left,target_right=branch(node.data,node.target)
+    if (sum(node.target)==0) or (sum(node.target) == len(node.target)):
+        return
+
+    best_split,mat_left,mat_right,target_left,target_right=branch(node.data,node.target,random_feature)
 
     if (len(mat_left)==0) or (len(mat_right)==0):
         return
@@ -87,8 +91,8 @@ def grow(node,n):
     node.right=right
 
     n+=1
-    grow(node.left,n)
-    grow(node.right,n)
+    grow(node.left,n,max_depth,min_sample,random_feature)
+    grow(node.right,n,max_depth,min_sample,random_feature)
     return
 
 def predict(x,root):
@@ -103,7 +107,7 @@ def predict(x,root):
             node=node.right
 
 #     print(node.value,node.col,node.left,node.right)
-    return sum(node.target)/len(node.target)>0.5
+    return sum(node.target)/len(node.target)
 
 class dnode:
     def __init__(self,data,target):
@@ -127,13 +131,13 @@ class decision_tree:
         self.root=None
         return
 
-    def fit(self,data,target):
+    def fit(self,data,target,max_depth=5,min_sample=3,random_feature=False):
         '''
         data: array of size(n,p)
         target: binary arrary of size(n)
         '''
         self.root=dnode(data,target)
-        grow(self.root,0)
+        grow(self.root,0,max_depth,min_sample,random_feature)
 
         return
 

@@ -113,4 +113,4 @@ class ada_boost:
             self.alphas.append(alpha_m)
 
     def predict(self,test_x):
-        return (predict(test_x,self.hs,self.alphas)>0).astype(int)
+        return predict(test_x,self.hs,self.alphas)
